@@ -12,6 +12,7 @@ import { Logo } from '@/components/icons/logo';
 import { useAuth } from '@/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
+import { useToast } from '@/hooks/use-toast';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -41,19 +42,41 @@ export default function LoginPage() {
   const bgImage = PlaceHolderImages.find(p => p.id === 'auth-background') || { imageUrl: 'https://picsum.photos/seed/authbg/1200/900', imageHint: 'abstract gradient' };
   const auth = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleGoogleLogin = async () => {
+    if (!auth) {
+        toast({
+            title: 'Error',
+            description: 'Authentication service is not available. Please try again later.',
+            variant: 'destructive',
+        });
+        return;
+    }
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
       router.push('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during Google login:", error);
+       toast({
+        title: 'Login Failed',
+        description: error.message || 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
     }
   };
   
   const handleEmailLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!auth) {
+        toast({
+            title: 'Error',
+            description: 'Authentication service is not available. Please try again later.',
+            variant: 'destructive',
+        });
+        return;
+    }
     const email = (event.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
     const password = (event.currentTarget.elements.namedItem('password') as HTMLInputElement).value;
     initiateEmailSignIn(auth, email, password);
