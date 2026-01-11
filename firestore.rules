@@ -1,0 +1,190 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Core Philosophy: This ruleset enforces a hybrid security model. User-specific data (profiles, quiz responses)
+     * is protected by a strict user-ownership model, ensuring users can only access their own information. Public
+     * reference data (career paths, colleges, scholarships) is publicly readable by any authenticated user,
+     * but write access is restricted to prevent unauthorized modifications.
+     *
+     * Data Structure:
+     * - /users/{userId}: Contains all private user data, including their profile and nested subcollections.
+     * - /users/{userId}/quizResponses/{quizResponseId}: A subcollection for a user's quiz results.
+     * - /careerPaths, /colleges, /scholarships: Top-level collections for publicly consumable data.
+     *
+     * Key Security Decisions:
+     * - User Data Isolation: All data under /users/{userId} is strictly accessible only to the authenticated
+     *   user whose UID matches {userId}. User enumeration is disallowed.
+     * - Public Data Access: Reference collections are readable by any signed-in user to populate the application's UI.
+     * - Restricted Writes: Direct client-side writes to public collections are disabled by default. This is a secure
+     *   posture that assumes such data is managed by a trusted backend environment (e.g., Cloud Functions).
+     *
+     * Denormalization for Authorization:
+     * This ruleset leverages path-based authorization for all user-specific data. By placing data under
+     * `/users/{userId}`, the `userId` from the path becomes the source of truth for ownership, avoiding costly `get()`
+     * calls to other documents for authorization checks.
+     *
+     * Structural Segregation:
+     * The separation of private user data into `/users` subcollections and public data into top-level collections
+     * (`/careerPaths`, etc.) is a key architectural choice. It creates a homogeneous security posture within
+     * each collection, making rules simpler to write and list operations more secure and performant.
+     */
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * isSignedIn
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * isOwner
+     * Checks if the authenticated user's UID matches the provided userId.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * isExistingOwner
+     * Checks if the user is the owner AND the document already exists.
+     * Used for safe update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * isCreatingOwnProfile
+     * Validates that a user creating their profile document sets the correct ownership link.
+     * The `firebaseUid` in the document must match the user's auth UID and the document ID.
+     */
+    function isCreatingOwnProfile(userId) {
+      return isOwner(userId) && request.resource.data.firebaseUid == userId;
+    }
+
+    /**
+     * isProfileOwnershipImmutable
+     * Ensures the core ownership link (firebaseUid) of a user profile cannot be changed on update.
+     */
+    function isProfileOwnershipImmutable() {
+      return request.resource.data.firebaseUid == resource.data.firebaseUid;
+    }
+
+    /**
+     * isCreatingOwnSubcollectionDoc
+     * Validates that a subcollection document (e.g., quizResponse) correctly links back to its parent owner.
+     */
+    function isCreatingOwnSubcollectionDoc(userId) {
+      return isOwner(userId) && request.resource.data.userId == userId;
+    }
+
+    /**
+     * isSubcollectionOwnershipImmutable
+     * Ensures the ownership link (userId) on a subcollection document cannot be changed.
+     */
+    function isSubcollectionOwnershipImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+
+    // ----------------------------------------------------------------------
+    // User Data Collections
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description   Manages user profile documents.
+     * @path          /users/{userId}
+     * @allow         (create) A new user creating their own profile document.
+     * @allow         (get, update, delete) The owner of the profile document.
+     * @deny          (any) Any user trying to access another user's profile.
+     * @deny          (list) Any user trying to list all users.
+     * @principle     Restricts access to a user's own data tree and validates relational integrity.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isCreatingOwnProfile(userId);
+      allow update: if isExistingOwner(userId) && isProfileOwnershipImmutable();
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description   Manages a user's individual quiz responses.
+       * @path          /users/{userId}/quizResponses/{quizResponseId}
+       * @allow         (any) The owner of the parent user document.
+       * @deny          (any) Any user other than the owner.
+       * @principle     Enforces document ownership via parent path for a private subcollection.
+       */
+      match /quizResponses/{quizResponseId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isCreatingOwnSubcollectionDoc(userId);
+        allow update: if isExistingOwner(userId) && isSubcollectionOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+
+    // ----------------------------------------------------------------------
+    // Public Read-Only Collections
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description   Stores career path information, readable by any signed-in user.
+     * @path          /careerPaths/{careerPathId}
+     * @allow         (get, list) Any authenticated user.
+     * @deny          (create, update, delete) All client-side writes.
+     * @principle     Public read access for reference data with writes restricted to a trusted environment.
+     */
+    match /careerPaths/{careerPathId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      // CRITICAL: Cannot implement owner-only writes. The 'CareerPath' entity is missing an 'ownerId' or 'authorId' field.
+      // Writes are disabled. This data should be managed by a backend admin SDK.
+      allow create: if false; // TODO: Add admin validation or define ownership once schema is updated.
+      allow update: if false; // TODO: Add admin validation or define ownership once schema is updated.
+      allow delete: if false; // TODO: Add admin validation or define ownership once schema is updated.
+    }
+
+    /**
+     * @description   Stores college information, readable by any signed-in user.
+     * @path          /colleges/{collegeId}
+     * @allow         (get, list) Any authenticated user.
+     * @deny          (create, update, delete) All client-side writes.
+     * @principle     Public read access for reference data with writes restricted to a trusted environment.
+     */
+    match /colleges/{collegeId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      // CRITICAL: Cannot implement owner-only writes. The 'College' entity is missing an 'ownerId' or 'authorId' field.
+      // Writes are disabled. This data should be managed by a backend admin SDK.
+      allow create: if false; // TODO: Add admin validation or define ownership once schema is updated.
+      allow update: if false; // TODO: Add admin validation or define ownership once schema is updated.
+      allow delete: if false; // TODO: Add admin validation or define ownership once schema is updated.
+    }
+
+    /**
+     * @description   Stores scholarship information, readable by any signed-in user.
+     * @path          /scholarships/{scholarshipId}
+     * @allow         (get, list) Any authenticated user.
+     * @deny          (create, update, delete) All client-side writes.
+     * @principle     Public read access for reference data with writes restricted to a trusted environment.
+     */
+    match /scholarships/{scholarshipId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      // CRITICAL: Cannot implement owner-only writes. The 'Scholarship' entity is missing an 'ownerId' or 'authorId' field.
+      // Writes are disabled. This data should be managed by a backend admin SDK.
+      allow create: if false; // TODO: Add admin validation or define ownership once schema is updated.
+      allow update: if false; // TODO: Add admin validation or define ownership once schema is updated.
+      allow delete: if false; // TODO: Add admin validation or define ownership once schema is updated.
+    }
+
+  }
+}

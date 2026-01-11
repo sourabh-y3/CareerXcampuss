@@ -1,0 +1,326 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user in the CareerXCompass platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "firebaseUid": {
+          "type": "string",
+          "description": "The Firebase User ID associated with this user."
+        },
+        "name": {
+          "type": "string",
+          "description": "User's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "User's phone number."
+        },
+        "role": {
+          "type": "string",
+          "description": "User's role (Student, Parent, Counselor/Admin)."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "URL of the user's profile image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "firebaseUid",
+        "name",
+        "email",
+        "role"
+      ]
+    },
+    "QuizResponse": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "QuizResponse",
+      "type": "object",
+      "description": "Stores the responses to the aptitude and interest quiz.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the QuizResponse entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N QuizResponse)"
+        },
+        "quizType": {
+          "type": "string",
+          "description": "Type of quiz (e.g., Aptitude, Interest)."
+        },
+        "responses": {
+          "type": "string",
+          "description": "JSON string containing the quiz responses.  Structure depends on the quiz type.",
+          "format": "json"
+        },
+        "completionDate": {
+          "type": "string",
+          "description": "Date and time the quiz was completed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "quizType",
+        "responses",
+        "completionDate"
+      ]
+    },
+    "CareerPath": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CareerPath",
+      "type": "object",
+      "description": "Represents a career path with recommended courses and colleges.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the CareerPath entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the career path (e.g., Software Engineer, Doctor)."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the career path."
+        },
+        "recommendedCourses": {
+          "type": "array",
+          "description": "List of recommended course names/IDs.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "collegeIds": {
+          "type": "array",
+          "description": "References to Colleges. (Relationship: CareerPath 1:N College)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "recommendedCourses"
+      ]
+    },
+    "College": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "College",
+      "type": "object",
+      "description": "Represents a college or university.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the College entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the college."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of college (Government or Private)."
+        },
+        "location": {
+          "type": "string",
+          "description": "Location of the college (city, state)."
+        },
+        "website": {
+          "type": "string",
+          "description": "College's website URL.",
+          "format": "uri"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the college."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the college's image.",
+          "format": "uri"
+        },
+        "coursesOffered": {
+          "type": "array",
+          "description": "List of courses offered by the college.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "location"
+      ]
+    },
+    "Scholarship": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Scholarship",
+      "type": "object",
+      "description": "Represents a scholarship opportunity.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Scholarship entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the scholarship."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the scholarship."
+        },
+        "provider": {
+          "type": "string",
+          "description": "Organization providing the scholarship."
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Application deadline for the scholarship.",
+          "format": "date-time"
+        },
+        "eligibilityCriteria": {
+          "type": "string",
+          "description": "JSON string representing eligibility requirements.",
+          "format": "json"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of the scholarship."
+        },
+        "collegeIds": {
+          "type": "array",
+          "description": "References to Colleges. (Relationship: Scholarship N:N College)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "provider",
+        "deadline",
+        "eligibilityCriteria",
+        "amount"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Path-based ownership ensures authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/quizResponses/{quizResponseId}",
+        "definition": {
+          "entityName": "QuizResponse",
+          "schema": {
+            "$ref": "#/backend/entities/QuizResponse"
+          },
+          "description": "Stores quiz responses for each user. Path-based ownership ensures authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user."
+            },
+            {
+              "name": "quizResponseId",
+              "description": "The unique ID of the quiz response."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/careerPaths/{careerPathId}",
+        "definition": {
+          "entityName": "CareerPath",
+          "schema": {
+            "$ref": "#/backend/entities/CareerPath"
+          },
+          "description": "Stores career path information. Globally accessible read, restricted write.",
+          "params": [
+            {
+              "name": "careerPathId",
+              "description": "The unique ID of the career path."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/colleges/{collegeId}",
+        "definition": {
+          "entityName": "College",
+          "schema": {
+            "$ref": "#/backend/entities/College"
+          },
+          "description": "Stores college information. Globally accessible read, restricted write.",
+          "params": [
+            {
+              "name": "collegeId",
+              "description": "The unique ID of the college."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/scholarships/{scholarshipId}",
+        "definition": {
+          "entityName": "Scholarship",
+          "schema": {
+            "$ref": "#/backend/entities/Scholarship"
+          },
+          "description": "Stores scholarship information. Globally accessible read, restricted write.",
+          "params": [
+            {
+              "name": "scholarshipId",
+              "description": "The unique ID of the scholarship."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support CareerXCompass's core features while adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs.  It leverages path-based ownership for user-specific data and structural segregation to maintain a homogeneous security posture within collections.\n\n*   **/users/{userId}**: Stores user profiles. This uses path-based ownership, granting each user sole access to their profile data.\n*   **/users/{userId}/quizResponses/{quizResponseId}**: Stores quiz responses for each user. This structure maintains the 1:N relationship between User and QuizResponse and uses path-based ownership.\n*   **/careerPaths/{careerPathId}**: Stores general career path information.  This collection is globally accessible, as there are no specific ownership requirements outlined.  Security rules would likely involve allowing read access to all users, with restricted write access.\n*   **/colleges/{collegeId}**: Stores college information. Similar to careerPaths, this collection is globally accessible and would have read access for all users, and restricted write access.\n*   **/scholarships/{scholarshipId}**: Stores scholarship information, globally accessible read, and restricted write.\n\n**Authorization Independence (Denormalization):**\n\nThis structure primarily relies on path-based ownership, which inherently ensures authorization independence.  Since user data is stored under the `/users/{userId}` path, security rules can directly verify that `request.auth.uid == userId` without needing to `get()` any parent documents.  This is critical for atomic operations and simplifies security rule logic.\n\n**QAPs (Rules are not Filters):**\n\nThe structure supports secure `list` operations:\n\n*   The segregation of user-owned data under `/users/{userId}` allows listing of quiz responses securely, as rules can easily filter by the `userId`.\n*   The globally accessible collections (`/careerPaths`, `/colleges`, `/scholarships`) can be listed without complex filtering logic in the rules, as the primary security concern is write access, not read access."
+  }
+}
