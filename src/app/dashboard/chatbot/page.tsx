@@ -10,9 +10,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { careerGuidanceChatbot } from '@/ai/flows/ai-career-guidance-chatbot';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { getChatbotResponse } from './actions';
 
 const chatSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty'),
@@ -48,12 +48,15 @@ export default function ChatbotPage() {
     form.reset();
 
     try {
-      const result = await careerGuidanceChatbot({ query: data.message });
+      const result = await getChatbotResponse(data.message);
+      if (result.error) {
+        throw new Error(result.error);
+      }
       const assistantMessage: Message = { role: 'assistant', content: result.response };
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error with AI chatbot:', error);
-      const errorMessage: Message = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
+      const errorMessage: Message = { role: 'assistant', content: error.message || 'Sorry, I encountered an error. Please try again.' };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
