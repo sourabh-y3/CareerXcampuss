@@ -1,11 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/icons/logo';
+import { useAuth } from '@/firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -33,6 +39,26 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function LoginPage() {
   const bgImage = PlaceHolderImages.find(p => p.id === 'auth-background') || { imageUrl: 'https://picsum.photos/seed/authbg/1200/900', imageHint: 'abstract gradient' };
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      router.push('/dashboard');
+    } catch (error) {
+      console.error("Error during Google login:", error);
+    }
+  };
+  
+  const handleEmailLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const email = (event.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
+    const password = (event.currentTarget.elements.namedItem('password') as HTMLInputElement).value;
+    initiateEmailSignIn(auth, email, password);
+    router.push('/dashboard');
+  };
 
   return (
     <div className="relative min-h-screen w-full lg:grid lg:grid-cols-2">
@@ -48,30 +74,32 @@ export default function LoginPage() {
             </p>
           </div>
           <Card>
-            <CardContent className="pt-6">
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="m@example.com" required />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link href="#" className="ml-auto inline-block text-sm underline">
-                      Forgot your password?
-                    </Link>
+            <form onSubmit={handleEmailLogin}>
+              <CardContent className="pt-6">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="m@example.com" required />
                   </div>
-                  <Input id="password" type="password" required />
+                  <div className="grid gap-2">
+                    <div className="flex items-center">
+                      <Label htmlFor="password">Password</Label>
+                      <Link href="#" className="ml-auto inline-block text-sm underline">
+                        Forgot your password?
+                      </Link>
+                    </div>
+                    <Input id="password" type="password" required />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Login
+                  </Button>
+                  <Button variant="outline" className="w-full" type="button" onClick={handleGoogleLogin}>
+                    <GoogleIcon className="mr-2 h-4 w-4" />
+                    Login with Google
+                  </Button>
                 </div>
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <GoogleIcon className="mr-2 h-4 w-4" />
-                  Login with Google
-                </Button>
-              </div>
-            </CardContent>
+              </CardContent>
+            </form>
             <CardFooter className="text-center text-sm">
               <p className="w-full">
                 Don&apos;t have an account?{' '}
