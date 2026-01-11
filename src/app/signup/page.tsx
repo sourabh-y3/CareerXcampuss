@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PlaceHolderImages } from '@/lib/placeholder-images'
@@ -44,7 +44,9 @@ export default function SignupPage() {
        console.error("Error during email sign up:", error);
        toast({
         title: 'Sign Up Failed',
-        description: error.message || 'An unexpected error occurred.',
+        description: error.code === 'auth/weak-password' 
+            ? 'Password should be at least 6 characters.' 
+            : error.message || 'An unexpected error occurred.',
         variant: 'destructive',
       });
     } finally {
@@ -99,7 +101,7 @@ export default function SignupPage() {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" required />
+                    <Input id="password" type="password" required minLength={6} />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -108,14 +110,14 @@ export default function SignupPage() {
                 </div>
               </CardContent>
             </form>
-            <CardFooter className="flex-col items-start text-sm">
-                <p className="w-full text-center">
+            <div className="p-6 pt-0 text-center text-sm">
+                <p className="w-full">
                     Already have an account?{' '}
                     <Link href="/login" className="underline">
                         Log in
                     </Link>
                 </p>
-            </CardFooter>
+            </div>
           </Card>
         </div>
       </div>
