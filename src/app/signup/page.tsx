@@ -13,6 +13,7 @@ import { useAuth } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 export default function SignupPage() {
   const bgImage = PlaceHolderImages.find(p => p.id === 'auth-background') || { imageUrl: 'https://picsum.photos/seed/authbg/1200/900', imageHint: 'abstract gradient' };
@@ -92,6 +93,7 @@ export default function SignupPage() {
                       id="email"
                       type="email"
                       placeholder="m@example.com"
+                      defaultValue="sourabh@gmail.com"
                       required
                     />
                   </div>
@@ -100,13 +102,14 @@ export default function SignupPage() {
                     <Input id="password" type="password" required />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {isLoading ? 'Creating account...' : 'Create an account'}
                   </Button>
                 </div>
               </CardContent>
             </form>
-            <CardFooter className="text-center text-sm">
-                <p className="w-full">
+            <CardFooter className="flex-col items-start text-sm">
+                <p className="w-full text-center">
                     Already have an account?{' '}
                     <Link href="/login" className="underline">
                         Log in
