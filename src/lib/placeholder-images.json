@@ -1,3 +1,76 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "A student looking at a digital interface with career paths.",
+      "imageUrl": "https://images.unsplash.com/photo-1767766277124-6794681bc955?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3R1ZGVudCUyMGZ1dHVyZXxlbnwwfHx8fDE3NjgxNTY4NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "student future"
+    },
+    {
+      "id": "feature-quiz",
+      "description": "A multiple choice quiz on a tablet.",
+      "imageUrl": "https://picsum.photos/seed/feature1/600/400",
+      "imageHint": "quiz assessment"
+    },
+    {
+      "id": "feature-roadmap",
+      "description": "A digital roadmap showing career progression.",
+      "imageUrl": "https://images.unsplash.com/photo-1459180129673-eefb56f79b45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjYXJlZXIlMjBwYXRofGVufDB8fHx8MTc2ODA5OTQ0MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "career path"
+    },
+    {
+      "id": "feature-colleges",
+      "description": "The exterior of a modern university building.",
+      "imageUrl": "https://images.unsplash.com/photo-1590579491624-f98f36d4c763?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx1bml2ZXJzaXR5JTIwY2FtcHVzfGVufDB8fHx8MTc2ODE0MTc2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university campus"
+    },
+    {
+      "id": "feature-ai",
+      "description": "A friendly robot assistant.",
+      "imageUrl": "https://images.unsplash.com/photo-1625314887424-9f190599bd56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhaSUyMHJvYm90fGVufDB8fHx8MTc2ODExODEwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ai robot"
+    },
+    {
+      "id": "auth-background",
+      "description": "Abstract background with blue and purple gradients.",
+      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhYnN0cmFjdCUyMGdyYWRpZW50fGVufDB8fHx8MTc2ODEzMjU3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract gradient"
+    },
+    {
+      "id": "user-avatar-1",
+      "description": "Profile picture of a user.",
+      "imageUrl": "https://images.unsplash.com/photo-1521119989659-a83eee488004?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjgxMTI1NjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "Profile picture of a user.",
+      "imageUrl": "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjgxMTI1NjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "college-logo-1",
+      "description": "Logo of a college.",
+      "imageUrl": "https://images.unsplash.com/photo-1728206313441-281ef4ea5d62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx1bml2ZXJzaXR5JTIwbG9nb3xlbnwwfHx8fDE3NjgwODY5NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university logo"
+    },
+    {
+      "id": "college-logo-2",
+      "description": "Logo of a college.",
+      "imageUrl": "https://images.unsplash.com/photo-1709227040897-14f6c6687086?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx1bml2ZXJzaXR5JTIwbG9nb3xlbnwwfHx8fDE3NjgwODY5NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university logo"
+    },
+    {
+      "id": "college-logo-3",
+      "description": "Logo of a college.",
+      "imageUrl": "https://images.unsplash.com/photo-1728206348193-9b5ae74a7d32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx1bml2ZXJzaXR5JTIwbG9nb3xlbnwwfHx8fDE3NjgwODY5NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university logo"
+    },
+    {
+      "id": "college-logo-4",
+      "description": "Logo of a college.",
+      "imageUrl": "https://images.unsplash.com/photo-1721441906254-b5d28d9114f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx1bml2ZXJzaXR5JTIwbG9nb3xlbnwwfHx8fDE3NjgwODY5NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university logo"
+    }
+  ]
 }
