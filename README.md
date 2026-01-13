@@ -96,7 +96,10 @@ This project is licensed under the MIT License.
 
 🙌 Contributors
 Sourabh Yadav – Project Lead & Developer
+
 Mayank Shrivastava - Developer
+
 Yashika khare - Developer
+
 Vartika Sharma - Designer 
 
